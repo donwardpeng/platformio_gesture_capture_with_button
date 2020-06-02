@@ -27,6 +27,12 @@ const int ledPin =  11;      // the number of the LED pin
 
 int buttonState = 0;    
 int samplesRead = numSamples;
+float ax_buffer[120];
+float ay_buffer[120];
+float az_buffer[120];
+float gx_buffer[120];
+float gy_buffer[120];
+float gz_buffer[120];
 
 void setup() {
   Serial.begin(9600);
@@ -53,29 +59,15 @@ void loop() {
     // read the state of the pushbutton value:
   buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if ((buttonState == HIGH) && (samplesRead == numSamples)) {
-    // turn LED on:
-    digitalWrite(ledPin, HIGH);
-    samplesRead = 0;
-  } else {
-    // turn LED off:
-    digitalWrite(ledPin, LOW);
-  }
-    
-    // if (IMU.accelerationAvailable()) {
-    //   // read the acceleration data
-    //   IMU.readAcceleration(aX, aY, aZ);
-
-    //   // sum up the absolutes
-    //   float aSum = fabs(aX) + fabs(aY) + fabs(aZ);
-
-    //   // check if it's above the threshold
-    //   if (aSum >= accelerationThreshold) {
-    //     // reset the sample read count
-    //     samplesRead = 0;
-    //     break;
-    //   }
-    // }
+    if ((buttonState == HIGH) && (samplesRead == numSamples)) {
+      // turn LED on:
+      delay(2000);
+      digitalWrite(ledPin, HIGH);
+      samplesRead = 0;
+    } else {
+      // turn LED off:
+      digitalWrite(ledPin, LOW);
+    }
   }
 
   // check if the all the required samples have been read since
@@ -89,23 +81,45 @@ void loop() {
       IMU.readGyroscope(gX, gY, gZ);
 
       samplesRead++;
+      ax_buffer[samplesRead] = aX;
+      ay_buffer[samplesRead] = aY;
+      az_buffer[samplesRead] = aZ;
+      gx_buffer[samplesRead] = gX;
+      gy_buffer[samplesRead] = gY;
+      gz_buffer[samplesRead] = gZ;
 
-      // print the data in CSV format
-      Serial.print(aX, 3);
-      Serial.print(',');
-      Serial.print(aY, 3);
-      Serial.print(',');
-      Serial.print(aZ, 3);
-      Serial.print(',');
-      Serial.print(gX, 3);
-      Serial.print(',');
-      Serial.print(gY, 3);
-      Serial.print(',');
-      Serial.print(gZ, 3);
-      Serial.println();
+      // // print the data in CSV format
+      // Serial.print(aX, 3);
+      // Serial.print(',');
+      // Serial.print(aY, 3);
+      // Serial.print(',');
+      // Serial.print(aZ, 3);
+      // Serial.print(',');
+      // Serial.print(gX, 3);
+      // Serial.print(',');
+      // Serial.print(gY, 3);
+      // Serial.print(',');
+      // Serial.print(gZ, 3);
+      // Serial.println();
 
       if (samplesRead == numSamples) {
         // add an empty line if it's the last sample
+        for(int i = 0; i <= numSamples; i++){
+          Serial.print(i);
+          Serial.print(',');
+          Serial.print(ax_buffer[i], 3);
+          Serial.print(',');
+          Serial.print(ay_buffer[i], 3);
+          Serial.print(',');
+          Serial.print(az_buffer[i], 3);
+          Serial.print(',');
+          Serial.print(gx_buffer[i], 3);
+          Serial.print(',');
+          Serial.print(gy_buffer[i], 3);
+          Serial.print(',');
+          Serial.print(gz_buffer[i], 3);
+          Serial.println();
+        }
         Serial.println();
       }
     }
