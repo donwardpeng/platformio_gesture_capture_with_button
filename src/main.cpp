@@ -1,22 +1,3 @@
-
-/*
-  IMU Capture
-
-  This example uses the on-board IMU to start reading acceleration and gyroscope
-  data from on-board IMU and prints it to the Serial Monitor for one second
-  when the significant motion is detected.
-
-  You can also use the Serial Plotter to graph the data.
-
-  The circuit:
-  - Arduino Nano 33 BLE or Arduino Nano 33 BLE Sense board.
-
-  Created by Don Coleman, Sandeep Mistry
-  Modified by Dominic Pajak, Sandeep Mistry
-
-  This example code is in the public domain.
-*/
-
 #include <Arduino_LSM9DS1.h>
 
 const float accelerationThreshold = 2.5; // threshold of significant in G's
@@ -57,13 +38,15 @@ void loop() {
   // wait for significant motion
   while (samplesRead == numSamples) {
     // read the state of the pushbutton value:
-  buttonState = digitalRead(buttonPin);
-  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-    if ((buttonState == HIGH) && (samplesRead == numSamples)) {
+    buttonState = digitalRead(buttonPin);
+    // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+    if (buttonState == 1) {
       // turn LED on:
-      delay(2000);
       digitalWrite(ledPin, HIGH);
       samplesRead = 0;
+      Serial.println();
+      Serial.print("Button pushed event");
+      buttonState = 0;
     } else {
       // turn LED off:
       digitalWrite(ledPin, LOW);
@@ -87,23 +70,8 @@ void loop() {
       gx_buffer[samplesRead] = gX;
       gy_buffer[samplesRead] = gY;
       gz_buffer[samplesRead] = gZ;
-
-      // // print the data in CSV format
-      // Serial.print(aX, 3);
-      // Serial.print(',');
-      // Serial.print(aY, 3);
-      // Serial.print(',');
-      // Serial.print(aZ, 3);
-      // Serial.print(',');
-      // Serial.print(gX, 3);
-      // Serial.print(',');
-      // Serial.print(gY, 3);
-      // Serial.print(',');
-      // Serial.print(gZ, 3);
-      // Serial.println();
-
+            
       if (samplesRead == numSamples) {
-        // add an empty line if it's the last sample
         for(int i = 0; i <= numSamples; i++){
           Serial.print(i);
           Serial.print(',');
@@ -120,6 +88,7 @@ void loop() {
           Serial.print(gz_buffer[i], 3);
           Serial.println();
         }
+        // add an empty line if it's the last sample        
         Serial.println();
       }
     }
