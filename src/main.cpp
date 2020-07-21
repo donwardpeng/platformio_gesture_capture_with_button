@@ -1,6 +1,5 @@
 #include <Arduino_LSM9DS1.h>
 
-const float accelerationThreshold = 2.5; // threshold of significant in G's
 const int numSamples = 119;
 
 const int buttonPin = 12;     // the number of the pushbutton pin
@@ -40,7 +39,7 @@ void loop() {
     // read the state of the pushbutton value:
     buttonState = digitalRead(buttonPin);
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-    if (buttonState == 1) {
+    if (buttonState == HIGH) {
       // turn LED on:
       digitalWrite(ledPin, HIGH);
       samplesRead = 0;
@@ -48,7 +47,7 @@ void loop() {
       Serial.print("Button pushed event");
       buttonState = 0;
     } else {
-      // turn LED off:
+      // turn LED off 
       digitalWrite(ledPin, LOW);
     }
   }
